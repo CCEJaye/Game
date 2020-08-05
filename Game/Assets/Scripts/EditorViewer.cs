@@ -221,7 +221,7 @@ public class EditorViewer : MonoBehaviour
                             }
                         }
 
-                        hexVertices.Add(new Vector3(vert.RealPos.x, y * 60f, vert.RealPos.y));
+                        hexVertices.Add(new Vector3(vert.RealPos.x, y * 120f, vert.RealPos.y));
                         allUVs.Add(new Vector2(vert.RealPos.x / maxX, vert.RealPos.y / maxY));
                         vertexCount++;
                     }
