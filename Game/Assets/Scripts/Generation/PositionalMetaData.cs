@@ -46,6 +46,14 @@ public class PositionalMetaData
         public bool IsCorner = false;
         public bool IsSide = false;
         public bool IsCore = false;
+        public bool IsN = false;
+        public bool IsNE = false;
+        public bool IsE = false;
+        public bool IsSE = false;
+        public bool IsS = false;
+        public bool IsSW = false;
+        public bool IsW = false;
+        public bool IsNW = false;
     }
 
     public class VertexMeta
@@ -65,6 +73,29 @@ public class PositionalMetaData
         public bool IsSW = false;
         public bool IsW = false;
         public bool IsNW = false;
+        public bool IsExtra = false;
+
+        public VertexMeta Copy()
+        {
+            return new VertexMeta() {
+            ParentHex = ParentHex,
+            RelPos = new Vector2Int(RelPos.x, RelPos.y),
+            RealPos = new Vector2(RealPos.x, RealPos.y),
+            IsCentre = IsCentre,
+            IsCorner = IsCorner,
+            IsSide = IsSide,
+            IsFlat = IsFlat,
+            IsN = IsN,
+            IsNE = IsE,
+            IsE = IsE,
+            IsSE = IsSE,
+            IsS = IsS,
+            IsSW = IsSW,
+            IsW = IsW,
+            IsNW = IsNW,
+            IsExtra = IsExtra
+            };
+        }
     }
 
     public static Dictionary<Vector2Int, VertexMeta> GetHexVertexMetaLookup()
@@ -185,6 +216,41 @@ public class PositionalMetaData
                     else hex.IsSide = true;
                 }
                 else hex.IsCore = true;
+                if (hex.IsSide)
+                {
+                    if (isEdge)
+                    {
+                        if (dX < 0) hex.IsW = true;
+                        else hex.IsE = true;
+                    }
+                    else if (dY == yMin)
+                    {
+                        if (dX < 0) hex.IsSW = true;
+                        else hex.IsSE = true;
+                    }
+                    else if (dY == yMax)
+                    {
+                        if (dX < 0) hex.IsNW = true;
+                        else hex.IsNE = true;
+                    }
+                } else if (hex.IsCorner)
+                {
+                    if (dX == 0)
+                    {
+                        if (dY == yMin) hex.IsS = true;
+                        else hex.IsN = true;
+                    }
+                    else if (dX < 0)
+                    {
+                        if (dY == yMin) hex.IsSW = true;
+                        else hex.IsNW = true;
+                    }
+                    else if (dX > 0)
+                    {
+                        if (dY == yMin) hex.IsSE = true;
+                        else hex.IsNE = true;
+                    }
+                }
                 dict.Add(hex.RelPos, hex);
             }
         }
@@ -202,14 +268,69 @@ public class PositionalMetaData
             newHex.RelPos = oldHex.RelPos;
             newHex.RealPos = oldHex.RealPos + realChunkPos;
             newHex.VertexMeta = GetHexVertexMeta(newHex, newHex.RealPos);
+            if (!oldHex.IsCore) AddExtraVertices(newHex.VertexMeta);
             newHex.IsCentre = oldHex.IsCentre;
             newHex.IsCorner = oldHex.IsCorner;
             newHex.IsSide = oldHex.IsSide;
             newHex.IsCore = oldHex.IsCore;
+            newHex.IsN = oldHex.IsN;
+            newHex.IsNE = oldHex.IsNE;
+            newHex.IsE = oldHex.IsE;
+            newHex.IsSE = oldHex.IsSE;
+            newHex.IsS = oldHex.IsS;
+            newHex.IsSW = oldHex.IsSW;
+            newHex.IsW = oldHex.IsW;
+            newHex.IsNW = oldHex.IsNW;
             dict.Add(newHex.RelPos, newHex);
         }
         return dict;
     }
+
+    public static void AddExtraVertices(Dictionary<Vector2Int, VertexMeta> vertices)
+    {
+        VertexMeta vertex19 = vertices[new Vector2Int(0, 1)].Copy();
+        vertex19.IsExtra = true;
+        vertex19.RelPos = new Vector2Int(19, 0);
+        vertex19.RealPos = Vector2.Lerp(vertices[new Vector2Int(-1, -1)].RealPos, vertices[new Vector2Int(0, -1)].RealPos, 0.5f);
+        vertices.Add(vertex19.RelPos, vertex19);
+        VertexMeta vertex20 = vertex19.Copy();
+        vertex20.RelPos = new Vector2Int(20, 0);
+        vertex20.RealPos = Vector2.Lerp(vertices[new Vector2Int(-1, -1)].RealPos, vertices[new Vector2Int(-1, 0)].RealPos, 0.5f);
+        vertices.Add(vertex20.RelPos, vertex20);
+        VertexMeta vertex21 = vertex20.Copy();
+        vertex21.RelPos = new Vector2Int(21, 0);
+        vertex21.RealPos = Vector2.Lerp(vertices[new Vector2Int(0, -1)].RealPos, vertices[new Vector2Int(1, 0)].RealPos, 0.5f);
+        vertices.Add(vertex21.RelPos, vertex21);
+        VertexMeta vertex22 = vertex21.Copy();
+        vertex22.RelPos = new Vector2Int(22, 0);
+        vertex22.RealPos = Vector2.Lerp(vertices[new Vector2Int(-1, 0)].RealPos, vertices[new Vector2Int(-1, 1)].RealPos, 0.5f);
+        vertices.Add(vertex22.RelPos, vertex22);
+        VertexMeta vertex23 = vertex22.Copy();
+        vertex23.RelPos = new Vector2Int(23, 0);
+        vertex23.RealPos = Vector2.Lerp(vertices[new Vector2Int(0, 1)].RealPos, vertices[new Vector2Int(1, 0)].RealPos, 0.5f);
+        vertices.Add(vertex23.RelPos, vertex23);
+        VertexMeta vertex24 = vertex23.Copy();
+        vertex24.RelPos = new Vector2Int(24, 0);
+        vertex24.RealPos = Vector2.Lerp(vertices[new Vector2Int(-1, 1)].RealPos, vertices[new Vector2Int(0, 1)].RealPos, 0.5f);
+        vertices.Add(vertex24.RelPos, vertex24);
+    }
+
+
+    public HexMeta ParentHex;
+    public Vector2Int RelPos;
+    public Vector2 RealPos;
+    public bool IsCentre = false;
+    public bool IsCorner = false;
+    public bool IsSide = false;
+    public bool IsFlat = false;
+    public bool IsN = false;
+    public bool IsNE = false;
+    public bool IsE = false;
+    public bool IsSE = false;
+    public bool IsS = false;
+    public bool IsSW = false;
+    public bool IsW = false;
+    public bool IsNW = false;
 
     public static Dictionary<Vector2Int, ChunkMeta> GetWorldChunkMetaLookup()
     {
@@ -222,7 +343,7 @@ public class PositionalMetaData
                 ChunkMeta chunk = new ChunkMeta();
                 chunk.RelPos = new Vector2Int(dX, dY);
                 chunk.RealPos = new Vector2(dX * XStepChunk + (dY & 1) * XStepChunk / 2f, dY * YStepChunk);
-                chunk.IsEdge = dX == 0 | dX == Meridians - 1;
+                chunk.IsEdge = dX == 0 || dX == Meridians - 1;
                 dict.Add(chunk.RelPos, chunk);
             }
         }

@@ -23,6 +23,7 @@ public class EditorViewer : MonoBehaviour
     public MeshFilter MeshFilter;
     public MeshRenderer MeshRenderer;
     public Texture2D Texture;
+    public Mesh Mesh;
 
     private List<GameObject> EditorObjects = new List<GameObject>();
 
@@ -67,7 +68,7 @@ public class EditorViewer : MonoBehaviour
         float maxX = float.MinValue;
         float maxY = float.MinValue;
         // smaller scale = zoom out
-        HexNoise noise = new HexNoise(356736743, 4, 0.4f, 3f, 100f);
+        HexNoise noise = new HexNoise(356799443, 4, 0.4f, 3f, 100f);
         Dictionary<Vector2Int, ChunkMeta> worldMeta = GetWorldMeta;
         foreach (KeyValuePair<Vector2Int, ChunkMeta> chunk in worldMeta)
         {
@@ -98,9 +99,9 @@ public class EditorViewer : MonoBehaviour
         int vertexCount = 0;
         int triangleCount = 0;
 
-        for (int dX = 0; dX < 2; dX++)
+        for (int dX = 0; dX < 3; dX++)
         {
-            for (int dY = 0; dY < 3; dY++)
+            for (int dY = 0; dY < 2; dY++)
             {
                 ChunkMeta chunk = worldMeta[new Vector2Int(dX, dY)];
                 List<Vector3> chunkVertices = new List<Vector3>();
@@ -110,7 +111,7 @@ public class EditorViewer : MonoBehaviour
                     HexMeta hex = h.Value;
                     List<Vector3> hexVertices = new List<Vector3>();
                     List<int> hexTriangles = new List<int>();
-                    foreach (Vector3Int triangle in HexTriangleLookup)
+                    foreach (Vector3Int triangle in GetRelevantTriangles(hex))
                     {
                         hexTriangles.Add(triangle.x + vertexCount);
                         hexTriangles.Add(triangle.y + vertexCount);
@@ -228,6 +229,12 @@ public class EditorViewer : MonoBehaviour
                     chunkVertices.AddRange(hexVertices);
                     chunkTriangles.AddRange(hexTriangles);
                 }
+                //GameObject chunkMesh = GameObject.CreatePrimitive(PrimitiveType.Plane);
+                //chunkMesh.transform.
+                //Mesh newMesh = new Mesh();
+                //newMesh.vertices = chunkVertices.ToArray();
+                //newMesh.triangles = chunkTriangles.ToArray();
+                //newMesh.uv = allUVs.ToArray();
                 allVertices.AddRange(chunkVertices);
                 allTriangles.AddRange(chunkTriangles);
             }
@@ -352,6 +359,119 @@ public class EditorViewer : MonoBehaviour
         new Vector3Int(9, 14, 10), new Vector3Int(10, 14, 15), new Vector3Int(10, 15, 11), new Vector3Int(12, 16, 13),
         new Vector3Int(13, 16, 17), new Vector3Int(13, 17, 14), new Vector3Int(14, 17, 18), new Vector3Int(14, 18, 15)
     };
+
+    public static Vector3Int[] HalfHexTriangleLookupNE = new Vector3Int[14]
+    {
+        new Vector3Int(0, 3, 4), new Vector3Int(0, 4, 1), new Vector3Int(1, 4, 5), new Vector3Int(1, 5, 2),
+        new Vector3Int(2, 5, 6), new Vector3Int(3, 7, 8), new Vector3Int(3, 8, 4), new Vector3Int(4, 8, 9),
+        new Vector3Int(4, 9, 5), new Vector3Int(5, 9, 21), new Vector3Int(7, 12, 8), new Vector3Int(8, 12, 22),
+        new Vector3Int(8, 22, 9), new Vector3Int(5, 21, 6)
+    };
+
+    public static Vector3Int[] HalfHexTriangleLookupE = new Vector3Int[14]
+    {
+        new Vector3Int(0, 3, 4), new Vector3Int(0, 4, 1), new Vector3Int(1, 4, 19), new Vector3Int(3, 7, 8),
+        new Vector3Int(3, 8, 4), new Vector3Int(4, 8, 9), new Vector3Int(7, 12, 8), new Vector3Int(8, 12, 13),
+        new Vector3Int(8, 13, 9), new Vector3Int(9, 13, 24), new Vector3Int(12, 16, 13), new Vector3Int(13, 16, 17),
+        new Vector3Int(4, 9, 19), new Vector3Int(13, 17, 24)
+    };
+
+    public static Vector3Int[] HalfHexTriangleLookupSE = new Vector3Int[14]
+    {
+        new Vector3Int(3, 7, 8), new Vector3Int(3, 8, 20), new Vector3Int(7, 12, 8), new Vector3Int(8, 12, 13),
+        new Vector3Int(8, 13, 9), new Vector3Int(9, 13, 14), new Vector3Int(9, 14, 23), new Vector3Int(12, 16, 13),
+        new Vector3Int(13, 16, 17), new Vector3Int(13, 17, 14), new Vector3Int(14, 17, 18), new Vector3Int(14, 18, 15),
+        new Vector3Int(8, 9, 20), new Vector3Int(14, 15, 23)
+    };
+
+    public static Vector3Int[] HalfHexTriangleLookupSW = new Vector3Int[14]
+    {
+        new Vector3Int(6, 21, 10), new Vector3Int(6, 10, 11), new Vector3Int(9, 22, 13), new Vector3Int(9, 13, 14),
+        new Vector3Int(9, 14, 10), new Vector3Int(10, 14, 15), new Vector3Int(10, 15, 11), new Vector3Int(12, 16, 13),
+        new Vector3Int(13, 16, 17), new Vector3Int(13, 17, 14), new Vector3Int(14, 17, 18), new Vector3Int(14, 18, 15),
+        new Vector3Int(9, 10, 21), new Vector3Int(12, 13, 22)
+    };
+
+    public static Vector3Int[] HalfHexTriangleLookupW = new Vector3Int[14]
+    {
+        new Vector3Int(1, 5, 2), new Vector3Int(1, 19, 5), new Vector3Int(2, 5, 6), new Vector3Int(5, 9, 10),
+        new Vector3Int(5, 10, 6), new Vector3Int(6, 10, 11), new Vector3Int(9, 14, 10), new Vector3Int(9, 24, 14),
+        new Vector3Int(10, 14, 15), new Vector3Int(10, 15, 11), new Vector3Int(14, 17, 18), new Vector3Int(14, 18, 15),
+        new Vector3Int(5, 19, 9), new Vector3Int(14, 24, 17)
+    };
+
+    public static Vector3Int[] HalfHexTriangleLookupNW = new Vector3Int[14]
+    {
+        new Vector3Int(0, 3, 4), new Vector3Int(0, 4, 1), new Vector3Int(1, 4, 5), new Vector3Int(1, 5, 2),
+        new Vector3Int(2, 5, 6), new Vector3Int(3, 20, 4), new Vector3Int(4, 9, 5), new Vector3Int(5, 9, 10),
+        new Vector3Int(5, 10, 6), new Vector3Int(6, 10, 11), new Vector3Int(9, 23, 10), new Vector3Int(10, 15, 11),
+        new Vector3Int(4, 20, 9), new Vector3Int(10, 23, 15)
+    };
+
+    public static Vector3Int[] ThirdHexTriangleLookupN = new Vector3Int[10]
+    {
+        new Vector3Int(0, 3, 4), new Vector3Int(0, 4, 1), new Vector3Int(1, 4, 5), new Vector3Int(1, 5, 2),
+        new Vector3Int(2, 5, 6), new Vector3Int(3, 20, 4), new Vector3Int(4, 9, 5), new Vector3Int(5, 9, 21),
+        new Vector3Int(4, 20, 9), new Vector3Int(5, 21, 6)
+    };
+
+    public static Vector3Int[] ThirdHexTriangleLookupNE = new Vector3Int[10]
+    {
+        new Vector3Int(0, 3, 4), new Vector3Int(0, 4, 1), new Vector3Int(1, 4, 19), new Vector3Int(3, 7, 8),
+        new Vector3Int(3, 8, 4), new Vector3Int(4, 8, 9), new Vector3Int(7, 12, 8), new Vector3Int(8, 12, 22),
+        new Vector3Int(4, 9, 19), new Vector3Int(8, 22, 9)
+    };
+
+    public static Vector3Int[] ThirdHexTriangleLookupSE = new Vector3Int[10]
+    {
+        new Vector3Int(3, 7, 8), new Vector3Int(3, 8, 20), new Vector3Int(7, 12, 8), new Vector3Int(8, 12, 13),
+        new Vector3Int(8, 13, 9), new Vector3Int(9, 13, 24), new Vector3Int(12, 16, 13), new Vector3Int(13, 16, 17),
+        new Vector3Int(8, 9, 20), new Vector3Int(13, 17, 24)
+    };
+
+    public static Vector3Int[] ThirdHexTriangleLookupS = new Vector3Int[10]
+    {
+        new Vector3Int(9, 22, 13), new Vector3Int(9, 13, 14), new Vector3Int(9, 14, 23), new Vector3Int(12, 16, 13),
+        new Vector3Int(13, 16, 17), new Vector3Int(13, 17, 14), new Vector3Int(14, 17, 18), new Vector3Int(14, 18, 15),
+        new Vector3Int(12, 13, 22), new Vector3Int(14, 15, 23)
+    };
+
+    public static Vector3Int[] ThirdHexTriangleLookupSW = new Vector3Int[10]
+    {
+        new Vector3Int(6, 21, 10), new Vector3Int(6, 10, 11), new Vector3Int(9, 14, 10), new Vector3Int(9, 24, 14),
+        new Vector3Int(10, 14, 15), new Vector3Int(10, 15, 11), new Vector3Int(14, 17, 18), new Vector3Int(14, 18, 15),
+        new Vector3Int(14, 24, 17), new Vector3Int(9, 10, 21)
+    };
+
+    public static Vector3Int[] ThirdHexTriangleLookupNW = new Vector3Int[10]
+    {
+        new Vector3Int(1, 5, 2), new Vector3Int(1, 19, 5), new Vector3Int(2, 5, 6), new Vector3Int(5, 9, 10),
+        new Vector3Int(5, 10, 6), new Vector3Int(6, 10, 11), new Vector3Int(9, 23, 10), new Vector3Int(10, 15, 11),
+        new Vector3Int(5, 19, 9), new Vector3Int(10, 23, 15)
+    };
+
+    public static Vector3Int[] GetRelevantTriangles(HexMeta hex)
+    {
+        if (hex.IsSide)
+        {
+            if (hex.IsNE) return HalfHexTriangleLookupNE;
+            if (hex.IsE) return HalfHexTriangleLookupE;
+            if (hex.IsSE) return HalfHexTriangleLookupSE;
+            if (hex.IsSW) return HalfHexTriangleLookupSW;
+            if (hex.IsW) return HalfHexTriangleLookupW;
+            if (hex.IsNW) return HalfHexTriangleLookupNW;
+        }
+        else if (hex.IsCorner)
+        {
+            if (hex.IsN) return ThirdHexTriangleLookupN;
+            if (hex.IsNE) return ThirdHexTriangleLookupNE;
+            if (hex.IsSE) return ThirdHexTriangleLookupSE;
+            if (hex.IsS) return ThirdHexTriangleLookupS;
+            if (hex.IsSW) return ThirdHexTriangleLookupSW;
+            if (hex.IsNW) return ThirdHexTriangleLookupNW;
+        }
+        return HexTriangleLookup;
+    }
 
     public Vector2Int GetHexNeighbour(HexMeta hex, HexDirection direction)
     {
