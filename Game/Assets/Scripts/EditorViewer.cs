@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
-using static PositionalMetaData;
-using static Data;
+using static MetaData;
+using static Objects;
 
 public class EditorViewer : MonoBehaviour
 {
@@ -70,7 +70,7 @@ public class EditorViewer : MonoBehaviour
         float maxY = float.MinValue;
         // smaller scale = zoom out
         HexNoise noise = new HexNoise(356799443, 4, 0.3f, 3f, 100f);
-        Dictionary<Vector2Int, ChunkMeta> worldMeta = GetWorldMeta;
+        Dictionary<Vector2Int, ChunkMeta> worldMeta = WorldMeta;
         foreach (KeyValuePair<Vector2Int, ChunkMeta> chunk in worldMeta)
         {
             foreach (KeyValuePair<Vector2Int, HexMeta> hex in chunk.Value.HexMeta)

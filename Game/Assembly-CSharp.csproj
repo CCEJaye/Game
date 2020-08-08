@@ -74,12 +74,12 @@
     <Compile Include="Assets\Scripts\Data\Worlds\Settings.cs" />
     <Compile Include="Assets\Scripts\Data\Worlds\Worlds.cs" />
     <Compile Include="Assets\Scripts\EditorViewer.cs" />
-    <Compile Include="Assets\Scripts\Generation\Data.cs" />
-    <Compile Include="Assets\Scripts\Generation\HexNoise.cs" />
-    <Compile Include="Assets\Scripts\Generation\Lookups.cs" />
-    <Compile Include="Assets\Scripts\Generation\MapGenerator.cs" />
-    <Compile Include="Assets\Scripts\Generation\PositionalMetaData.cs" />
     <Compile Include="Assets\Scripts\HexGenerator.cs" />
+    <Compile Include="Assets\Scripts\MapGeneration\Data.cs" />
+    <Compile Include="Assets\Scripts\MapGeneration\HexNoise.cs" />
+    <Compile Include="Assets\Scripts\MapGeneration\MapGenerator.cs" />
+    <Compile Include="Assets\Scripts\MapGeneration\MetaData.cs" />
+    <Compile Include="Assets\Scripts\MapGeneration\Objects.cs" />
     <Compile Include="Assets\Scripts\NoiseGenerator.cs" />
     <Compile Include="Assets\Scripts\Tools\HexTools.cs" />
     <Compile Include="Assets\Scripts\Tools\Maths.cs" />
