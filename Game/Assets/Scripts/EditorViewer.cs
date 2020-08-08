@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using static PositionalMetaData;
+using static Data;
 
 public class EditorViewer : MonoBehaviour
 {
@@ -29,10 +30,10 @@ public class EditorViewer : MonoBehaviour
 
     public void Start()
     {
-        GenerateHexes();
+        //GenerateHexes();
     }
 
-    public NoiseGenerator.NoiseSettings GetSettings() 
+    public NoiseGenerator.NoiseSettings GetSettings()
     {
         return new NoiseGenerator.NoiseSettings()
         {
@@ -48,7 +49,7 @@ public class EditorViewer : MonoBehaviour
 
     public void ClearHexes()
     {
-        foreach(GameObject hex in EditorObjects)
+        foreach (GameObject hex in EditorObjects)
         {
             DestroyImmediate(hex);
         }
@@ -56,7 +57,7 @@ public class EditorViewer : MonoBehaviour
     }
 
     public void Generate()
-    {    
+    {
         NoiseGenerator.NoiseMap map = new NoiseGenerator.NoiseMap(GetSettings());
         Draw(Combined ? map.Combined : map.Individuals[CurrentOctave]);
     }
@@ -68,15 +69,15 @@ public class EditorViewer : MonoBehaviour
         float maxX = float.MinValue;
         float maxY = float.MinValue;
         // smaller scale = zoom out
-        HexNoise noise = new HexNoise(356799443, 4, 0.4f, 3f, 100f);
+        HexNoise noise = new HexNoise(356799443, 4, 0.3f, 3f, 100f);
         Dictionary<Vector2Int, ChunkMeta> worldMeta = GetWorldMeta;
         foreach (KeyValuePair<Vector2Int, ChunkMeta> chunk in worldMeta)
         {
             foreach (KeyValuePair<Vector2Int, HexMeta> hex in chunk.Value.HexMeta)
             {
-                /*GameObject obj = Instantiate(Hex, new Vector3(
+                GameObject obj = Instantiate(Hex, new Vector3(
                     hex.Value.RealPos.x, 0, hex.Value.RealPos.y), Quaternion.identity);
-                EditorObjects.Add(obj);*/
+                EditorObjects.Add(obj);
                 noise.StoreRawValues(hex.Value.RealPos);
 
                 foreach (KeyValuePair<Vector2Int, VertexMeta> vert in hex.Value.VertexMeta)
@@ -93,7 +94,7 @@ public class EditorViewer : MonoBehaviour
         }
         noise.NormaliseAll();
 
-        List<Vector3> allVertices = new List<Vector3>();
+        /*List<Vector3> allVertices = new List<Vector3>();
         List<int> allTriangles = new List<int>();
         List<Vector2> allUVs = new List<Vector2>();
         int vertexCount = 0;
@@ -222,8 +223,8 @@ public class EditorViewer : MonoBehaviour
                             }
                         }
 
-                        hexVertices.Add(new Vector3(vert.RealPos.x, y * 120f, vert.RealPos.y));
-                        allUVs.Add(new Vector2(vert.RealPos.x / maxX, vert.RealPos.y / maxY));
+                        hexVertices.Add(new Vector3(vert.RealPos.x, GetSteppedValue(y, 0.1f) * 80f, vert.RealPos.y));
+                        allUVs.Add(new Vector2(vert.RealPos.x, vert.RealPos.y));
                         vertexCount++;
                     }
                     chunkVertices.AddRange(hexVertices);
@@ -246,7 +247,7 @@ public class EditorViewer : MonoBehaviour
         mesh.uv = allUVs.ToArray();
         mesh.RecalculateNormals();
 
-        MeshFilter.sharedMesh = mesh;
+        MeshFilter.sharedMesh = mesh;*/
         //MeshRenderer.sharedMaterial.mainTexture = Texture;
 
         /*HexRefMetaData metaData = new HexRefMetaData(Width, Height, 12);
@@ -298,6 +299,16 @@ public class EditorViewer : MonoBehaviour
         }*/
     }
 
+    public float GetSteppedValue(float value, float interval)
+    {
+        float step = 0f;
+        while (step < value)
+        {
+            step += interval;
+        }
+        return step;
+    }
+
     public void Draw(float[,] noise)
     {
         int width = noise.GetLength(0);
@@ -312,7 +323,7 @@ public class EditorViewer : MonoBehaviour
             {
                 if (Colour)
                 {
-                    foreach(TerrainRange range in Ranges)
+                    foreach (TerrainRange range in Ranges)
                     {
                         if (noise[x, y] >= range.Start)
                         {
@@ -452,7 +463,7 @@ public class EditorViewer : MonoBehaviour
 
     public static Vector3Int[] GetRelevantTriangles(HexMeta hex)
     {
-        if (hex.IsSide)
+        /*if (hex.IsSide)
         {
             if (hex.IsNE) return HalfHexTriangleLookupNE;
             if (hex.IsE) return HalfHexTriangleLookupE;
@@ -469,7 +480,7 @@ public class EditorViewer : MonoBehaviour
             if (hex.IsS) return ThirdHexTriangleLookupS;
             if (hex.IsSW) return ThirdHexTriangleLookupSW;
             if (hex.IsNW) return ThirdHexTriangleLookupNW;
-        }
+        }*/
         return HexTriangleLookup;
     }
 
@@ -504,12 +515,11 @@ public class EditorViewer : MonoBehaviour
 
     public enum HexDirection
     {
-        N, NE, SE, S, SW, NW
+        N, NE, E, SE, S, SW, W, NW
     }
 
     public static Vector2Int GetHexOffsetN = new Vector2Int(0, 1);
     public static Vector2Int GetHexOffsetS = new Vector2Int(0, -1);
-
 
     public static Vector2Int GetHexOffsetNEEven = new Vector2Int(1, 0);
     public static Vector2Int GetHexOffsetNEOdd = new Vector2Int(1, 1);
