@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Objects;
 
 public class TextureAtlas : MonoBehaviour
 {
     public Texture2D AtlasTexture;
+    public float Scale = 10f;
 
     public const int AtlasSize = 2048;
     public const int Size = 8;
@@ -25,24 +27,22 @@ public class TextureAtlas : MonoBehaviour
         return new Vector4(xy.x, xy.y, xy.x + FloatOffset, xy.y + FloatOffset);
     }
 
-    public Vector2 GetUVForVertex(Vector2 realPos, int textureId)
+    public Vector2 CalculateVertexAtlasUV(Vector2 vertexUV, int textureId)
     {
         if (TextureVectors.Count == 0) GenerateVectors();
-        return GetUVForVertex(realPos, TextureVectors[textureId]);
+        return CalculateVertexAtlasUV(vertexUV, TextureVectors[textureId]);
     }
 
-    public Vector2 GetUVForVertex(Vector2 realPos, Vector2 textureVector)
+    public Vector2 CalculateVertexAtlasUV(Vector2 vertexUV, Vector2 textureVector)
     {
-        if (realPos.y > -1f && realPos.y < 0f)
+        if (TextureVectors.Count == 0) GenerateVectors();
+        if (textureVector == TextureVectors[0])
         {
             bool test = true;
         }
-        if (TextureVectors.Count == 0) GenerateVectors();
         Vector4 textureBounds = GetTextureBounds(textureVector);
-        Vector2 uv = new Vector2(
-            Mathf.Repeat(realPos.x, FloatOffset) + textureBounds.x,
-            Mathf.Repeat(realPos.y, FloatOffset) + textureBounds.y);
-
+        float ratioModifier = Mathf.Sqrt(3f) / 2;
+        Vector2 uv = new Vector2(textureBounds.x+ vertexUV.x * FloatOffset * ratioModifier, textureBounds.y + vertexUV.y * FloatOffset * ratioModifier);
         return uv;
     }
 

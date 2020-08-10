@@ -31,7 +31,7 @@ public class MapGenerator : MonoBehaviour
         float maxX = float.MinValue;
         float maxY = float.MinValue;
         System.Random rand = new System.Random();
-        HexNoise noise = new HexNoise(rand.Next(), 4, 0.3f, 3f, 200f);
+        HexNoise noise = new HexNoise(rand.Next(), 4, 0.3f, 3f, 20f);
 
         Dictionary<Vector2Int, ChunkMeta> worldMeta = WorldMeta;
         foreach (KeyValuePair<Vector2Int, ChunkMeta> chunk in worldMeta)
@@ -70,7 +70,8 @@ public class MapGenerator : MonoBehaviour
             {
                 HexMeta currentHex = h.Value;
 
-                int hexRand = rand.Next(0, 63);
+                float value = GetSteppedValue(noise.ValueList[currentHex.RealPos].All, 1f / 22f);
+                int textureId = (int)((1 - value) * 22f);
 
                 List<Vector3> hexVertices = new List<Vector3>();
                 List<int> hexTriangles = new List<int>();
@@ -102,9 +103,9 @@ public class MapGenerator : MonoBehaviour
                     }
                     averagedValue /= notNullSamples;
 
-                    hexVertices.Add(new Vector3(currentVertex.RealPos.x, averagedValue * 80f, currentVertex.RealPos.y));
+                    hexVertices.Add(new Vector3(currentVertex.RealPos.x, averagedValue * 7.5f, currentVertex.RealPos.y));
                     Vector2 realUV = new Vector2(currentVertex.RealPos.x / (maxX - minX), currentVertex.RealPos.y / (maxY - minY));
-                    hexUVs.Add(TextureAtlas.GetUVForVertex(realUV, hexRand));
+                    hexUVs.Add(TextureAtlas.CalculateVertexAtlasUV(currentVertex.RelUV, textureId));
                     vertexCount++;
                 }
                 chunkVertices.AddRange(hexVertices);
@@ -131,7 +132,7 @@ public class MapGenerator : MonoBehaviour
         //DestroyImmediate(meshObject.GetComponent<MeshCollider>());
         meshObject.GetComponent<MeshFilter>().sharedMesh = mesh;
         meshObject.GetComponent<MeshRenderer>().material = AtlasMaterial;
-        meshObject.transform.localScale = Vector3.one / 10f;
+        //meshObject.transform.localScale = Vector3.one / 10f;
 
         Chunks.Add(meshObject);
     }

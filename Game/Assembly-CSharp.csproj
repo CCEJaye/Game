@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Data\Features.cs" />
+    <Compile Include="Assets\Scripts\Data\Generation.cs" />
     <Compile Include="Assets\Scripts\Data\Resources.cs" />
     <Compile Include="Assets\Scripts\Data\Structs.cs" />
     <Compile Include="Assets\Scripts\Data\Terrains.cs" />
@@ -74,7 +75,6 @@
     <Compile Include="Assets\Scripts\Data\Worlds\Settings.cs" />
     <Compile Include="Assets\Scripts\Data\Worlds\Worlds.cs" />
     <Compile Include="Assets\Scripts\Environment\MapGenerator.cs" />
-    <Compile Include="Assets\Scripts\Environment\MapGenerator\Data.cs" />
     <Compile Include="Assets\Scripts\Environment\MapGenerator\HexNoise.cs" />
     <Compile Include="Assets\Scripts\Environment\MapGenerator\MetaData.cs" />
     <Compile Include="Assets\Scripts\Environment\MapGenerator\Objects.cs" />

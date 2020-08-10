@@ -63,6 +63,7 @@ public class Objects
         public bool IsSide = false;
         public bool IsFlat = false;
         public HexDirection Position;
+        public Vector2 RelUV;
 
         public VertexMeta HexOffset(HexMeta parentHex, Vector2 realHexPos)
         {
@@ -77,7 +78,8 @@ public class Objects
                 IsCorner = IsCorner,
                 IsSide = IsSide,
                 IsFlat = IsFlat,
-                Position = Position
+                Position = Position,
+                RelUV = new Vector2(RelUV.x, RelUV.y)
             };
         }
     }
