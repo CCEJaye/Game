@@ -24,7 +24,7 @@ public class Settings
 
         public bool MeetsConditions(float value)
         {
-            if (Conditions.Length == 0) return true;
+            if (Conditions == null || Conditions.Length == 0) return true;
             foreach (BaseCondition condition in Conditions)
             {
                 if (!condition.IsTrue(value)) return false;
@@ -33,15 +33,27 @@ public class Settings
             return true;
         }
 
-        public float CalculateValue(float value)
+        public float ModifyValue(float value)
         {
-            if (Modifiers.Length == 0) return value;
-            float newValue = 1f;
+            if (Modifiers == null || Modifiers.Length == 0) return value;
+            float newValue = value;
             foreach (BaseModifier modifier in Modifiers)
             {
                 newValue *= modifier.GetModifiedValue(value);
             }
             return newValue;
+        }
+
+        public float Calculate(float value, float def, bool onlyModifyConditionally)
+        {
+            if (onlyModifyConditionally)
+            {
+                return MeetsConditions(value) ? ModifyValue(value) : def;
+            }
+            else
+            {
+                return ModifyValue(MeetsConditions(value) ? value : def);
+            }
         }
     }
 }

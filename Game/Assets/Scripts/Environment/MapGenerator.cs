@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Objects;
 using static MetaData;
-using static Data;
+using static Generation;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -17,43 +17,20 @@ public class MapGenerator : MonoBehaviour
     public TextureAtlas TextureAtlas;
     public WorldType World;
 
+    public static float HeightMultiplier = 7.5f;
+
     private List<GameObject> Chunks = new List<GameObject>();
 
     public void Start()
     {
-        Generate();
+        //Generate();
     }
 
     public void Generate()
     {
-        float minX = float.MaxValue;
-        float minY = float.MaxValue;
-        float maxX = float.MinValue;
-        float maxY = float.MinValue;
+        Clear();
         System.Random rand = new System.Random();
-        HexNoise noise = new HexNoise(rand.Next(), 4, 0.3f, 3f, 20f);
-
-        Dictionary<Vector2Int, ChunkMeta> worldMeta = WorldMeta;
-        foreach (KeyValuePair<Vector2Int, ChunkMeta> chunk in worldMeta)
-        {
-            foreach (KeyValuePair<Vector2Int, HexMeta> hex in chunk.Value.HexMeta)
-            {
-                noise.StoreRawValues(hex.Value.RealPos);
-
-                foreach (KeyValuePair<Vector2Int, VertexMeta> vert in hex.Value.VertexMeta)
-                {
-                    if (vert.Value.RealPos.x < minX) minX = vert.Value.RealPos.x;
-                    if (vert.Value.RealPos.x > maxX) maxX = vert.Value.RealPos.x;
-                    if (vert.Value.RealPos.y < minY) minY = vert.Value.RealPos.y;
-                    if (vert.Value.RealPos.y > maxY) maxY = vert.Value.RealPos.y;
-                }
-            }
-        }
-        noise.NormaliseAll();
-
-        List<Vector3> allVertices = new List<Vector3>();
-        List<int> allTriangles = new List<int>();
-        List<Vector2> allUVs = new List<Vector2>();
+        MapData mapData = new MapData(rand.Next(), Worlds.WorldCollection.Continent);
 
         foreach (KeyValuePair<Vector2Int, ChunkMeta> c in WorldMeta)
         {
@@ -70,8 +47,7 @@ public class MapGenerator : MonoBehaviour
             {
                 HexMeta currentHex = h.Value;
 
-                float value = GetSteppedValue(noise.ValueList[currentHex.RealPos].All, 1f / 22f);
-                int textureId = (int)((1 - value) * 22f);
+                int textureId = mapData.GetTerrain(currentHex.RealPos).TerrainID;
 
                 List<Vector3> hexVertices = new List<Vector3>();
                 List<int> hexTriangles = new List<int>();
@@ -86,25 +62,9 @@ public class MapGenerator : MonoBehaviour
                 {
                     VertexMeta currentVertex = v.Value;
 
-                    Vector2 baseSample = currentHex.RealPos;
-                    Vector2 sampleA = GetHexNeighbourForVertex(currentHex, currentVertex.HexNeighbourA);
-                    Vector2 sampleB = GetHexNeighbourForVertex(currentHex, currentVertex.HexNeighbourB);
-                    float averagedValue = GetSteppedValue(noise.ValueList[baseSample].All, 0.125f);
-                    int notNullSamples = 1;
-                    if (sampleA != NullVector)
-                    {
-                        averagedValue += GetSteppedValue(noise.ValueList[sampleA].All, 0.125f);
-                        notNullSamples++;
-                    }
-                    if (sampleB != NullVector)
-                    {
-                        averagedValue += GetSteppedValue(noise.ValueList[sampleB].All, 0.125f);
-                        notNullSamples++;
-                    }
-                    averagedValue /= notNullSamples;
-
-                    hexVertices.Add(new Vector3(currentVertex.RealPos.x, averagedValue * 7.5f, currentVertex.RealPos.y));
-                    Vector2 realUV = new Vector2(currentVertex.RealPos.x / (maxX - minX), currentVertex.RealPos.y / (maxY - minY));
+                    hexVertices.Add(new Vector3(currentVertex.RealPos.x, 
+                        mapData.GetVertexElevation(currentHex, currentVertex) * HeightMultiplier, 
+                        currentVertex.RealPos.y));
                     hexUVs.Add(TextureAtlas.CalculateVertexAtlasUV(currentVertex.RelUV, textureId));
                     vertexCount++;
                 }
@@ -112,11 +72,9 @@ public class MapGenerator : MonoBehaviour
                 chunkTriangles.AddRange(hexTriangles);
                 chunkUVs.AddRange(hexUVs);
             }
-            allVertices.AddRange(chunkVertices);
-            allTriangles.AddRange(chunkTriangles);
-            allUVs.AddRange(chunkUVs);
 
             CreateChunk(chunkVertices.ToArray(), chunkTriangles.ToArray(), chunkUVs.ToArray());
+            CreateSea(chunkVertices.ToArray(), chunkTriangles.ToArray(), chunkUVs.ToArray(), mapData);
         }
     }
 
@@ -127,11 +85,44 @@ public class MapGenerator : MonoBehaviour
         mesh.triangles = triangles;
         mesh.uv = uvs;
         mesh.RecalculateNormals();
+        mesh.RecalculateTangents();
 
         GameObject meshObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        //DestroyImmediate(meshObject.GetComponent<MeshCollider>());
+        DestroyImmediate(meshObject.GetComponent<MeshCollider>());
         meshObject.GetComponent<MeshFilter>().sharedMesh = mesh;
         meshObject.GetComponent<MeshRenderer>().material = AtlasMaterial;
+        meshObject.transform.parent = transform;
+
+        //meshObject.transform.localScale = Vector3.one / 10f;
+
+        Chunks.Add(meshObject);
+    }
+
+    private void CreateSea(Vector3[] vertices, int[] triangles, Vector2[] uvs, MapData mapData)
+    {
+        Vector3[] newVertices = new Vector3[vertices.Length];
+        for (int i = 0; i< vertices.Length; i++)
+        {
+            newVertices[i] = new Vector3(vertices[i].x, mapData.WorldParams.Elevation.GetSeaLevel() * HeightMultiplier, vertices[i].z);
+        }
+        Vector2[] newUVs = new Vector2[uvs.Length];
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            newUVs[i] = new Vector2(newVertices[i].x, newVertices[i].z);
+        }
+        Mesh mesh = new Mesh();
+        mesh.vertices = newVertices;
+        mesh.triangles = triangles;
+        mesh.uv = newUVs;
+        mesh.RecalculateNormals();
+        mesh.RecalculateTangents();
+
+        GameObject meshObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        DestroyImmediate(meshObject.GetComponent<MeshCollider>());
+        meshObject.GetComponent<MeshFilter>().sharedMesh = mesh;
+        meshObject.GetComponent<MeshRenderer>().material = AtlasMaterial;
+        meshObject.transform.parent = transform;
+
         //meshObject.transform.localScale = Vector3.one / 10f;
 
         Chunks.Add(meshObject);
@@ -146,7 +137,7 @@ public class MapGenerator : MonoBehaviour
         Chunks.Clear();
     }
 
-    private float GetSteppedValue(float value, float interval)
+    /*private float GetSteppedValue(float value, float interval)
     {
         float step = 0f;
         while (step < value)
@@ -154,5 +145,5 @@ public class MapGenerator : MonoBehaviour
             step += interval;
         }
         return step;
-    }
+    }*/
 }

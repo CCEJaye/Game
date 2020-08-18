@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static Objects;
-using static Data;
+using static Generation;
 
 public static class MetaData
 {

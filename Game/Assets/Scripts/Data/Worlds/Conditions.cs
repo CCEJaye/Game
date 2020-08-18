@@ -6,7 +6,7 @@ public class Conditions
 {
     public class BaseCondition
     {
-        protected Structs.Range Range;
+        protected float TopOfRange;
 
         public virtual bool IsTrue(float value)
         {
@@ -16,14 +16,14 @@ public class Conditions
 
     public class RangeCondition : BaseCondition
     {
-        public RangeCondition(float start, float end)
+        public RangeCondition(float topOfRange)
         {
-            Range = new Structs.Range(start, end);
+            TopOfRange = topOfRange;
         }
 
         public override bool IsTrue(float value)
         {
-            return Range.Contains(value);
+            return value <= TopOfRange;
         }
     }
 }

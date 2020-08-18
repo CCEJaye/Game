@@ -6,7 +6,7 @@ public static class Modifiers
 {
     public class BaseModifier
     {
-        protected Structs.Range Range;
+        protected float TopOfRange;
 
         public virtual float GetModifiedValue(float value)
         {

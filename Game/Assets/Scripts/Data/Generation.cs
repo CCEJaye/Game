@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Objects;
 
-public class Data
+public class Generation
 {
     public const int Meridians = 6;
     public const int Parallels = 4;
-    public const int ChunkRadius = 16;
+    public const int ChunkRadius = 18;
     public static readonly float XStepHex = Mathf.Sqrt(3) / 2f;
     public static readonly float YStepHex = 1f;
     public static readonly float XStepChunk = ChunkRadius * Mathf.Sqrt(3);

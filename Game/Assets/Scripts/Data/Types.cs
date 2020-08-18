@@ -7,27 +7,25 @@ public class Types
 
     public enum ScopeTypes
     {
-        Local, Global
+        None, Local, Global
     }
 
     public enum TerrainTypes
     {
-        Snow, Marsh, Sand, Water,
-        Rock, Soil, Gravel, Grass,
-        Lava, Chemical, Space, Ice,
-        Savanna, Mud, Crystal, Gas,
-        Dust, Swamp, Coral, Clay,
-        Stone, Ash, Silt, Shale, Moss
+        None, MoltenRock, Ice, Crystal, Lava, Swamp, 
+        Water, Chemical, LavaFloe, Marsh, IceFloe, Sand, 
+        Slush, Snow, Gravel, Rock, Stone, DryDirt, Mud, 
+        Clay, Soil, Ash, Moss, Mulch, Grass
     }
 
     public enum AreaTypes
     {
-        Land, Sea, Air, Space
+        None, Land, Sea, Air, Space
     }
 
     public enum UnitTypes
     {
-        LandSmall, LandMedium, LandLarge,
+        None, LandSmall, LandMedium, LandLarge,
         SeaSmall, SeaMedium, SeaLarge,
         AirSmall, AirMedium, AirLarge,
         SpaceSmall, SpaceMedium, SpaceLarge
@@ -35,6 +33,7 @@ public class Types
 
     public enum ResourceTypes
     {
+        None,
         Core,
         Alkali,
         Alkaline,
@@ -52,11 +51,13 @@ public class Types
 
     public enum FeatureTypes
     {
+        None,
         Geyser
     }
 
     public enum OutcropTypes
     {
+        None,
         Trees
     }
 }

@@ -8,7 +8,7 @@ public class TextureAtlas : MonoBehaviour
     public Texture2D AtlasTexture;
     public float Scale = 10f;
 
-    public const int AtlasSize = 2048;
+    public const int AtlasSize = 4096;
     public const int Size = 8;
     public const int TextureSize = AtlasSize / Size;
     public const float FloatOffset = 1f / Size;
@@ -36,13 +36,10 @@ public class TextureAtlas : MonoBehaviour
     public Vector2 CalculateVertexAtlasUV(Vector2 vertexUV, Vector2 textureVector)
     {
         if (TextureVectors.Count == 0) GenerateVectors();
-        if (textureVector == TextureVectors[0])
-        {
-            bool test = true;
-        }
         Vector4 textureBounds = GetTextureBounds(textureVector);
         float ratioModifier = Mathf.Sqrt(3f) / 2;
-        Vector2 uv = new Vector2(textureBounds.x+ vertexUV.x * FloatOffset * ratioModifier, textureBounds.y + vertexUV.y * FloatOffset * ratioModifier);
+        Vector2 uv = new Vector2(textureBounds.x + vertexUV.x * FloatOffset * ratioModifier, 
+            textureBounds.y + vertexUV.y * FloatOffset * ratioModifier);
         return uv;
     }
 

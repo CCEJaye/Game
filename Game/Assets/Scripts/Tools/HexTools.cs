@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
-using static Structs;
 
 public static class HexTools
 {
@@ -26,9 +25,9 @@ public static class HexTools
         return array;
     }
 
-    public static PointF[,] GetSideTopArray(int width, int height)
+    public static Vector2[,] GetSideTopArray(int width, int height)
     {
-        PointF[,] array = new PointF[width, height];
+        Vector2[,] array = new Vector2[width, height];
 
         float xStep = Mathf.Sqrt(3) / 2;
         float yStep = 0.5f;
@@ -40,7 +39,7 @@ public static class HexTools
                 float aX = x * xStep;
                 float aY = y + (x & 1) * yStep;
 
-                array[x, y] = new PointF(aX, aY);
+                array[x, y] = new Vector2(aX, aY);
             }
         }
 

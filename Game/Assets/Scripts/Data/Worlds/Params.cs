@@ -1,12 +1,13 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions.Comparers;
-using UnityEngine.SocialPlatforms;
 using static Settings;
+using static Terrains;
 
 public class Params
 {
+
     // CATEGORY     PARAMETER        CON MOD OCC MAP         CONSTANT EFFECT
     // Generation   Elevation        Y   Y   N   Elevation   Y
     // Generation   Terrain          Y   Y   N   Elevation   Y
@@ -44,7 +45,7 @@ public class Params
 
         public virtual float CalculateValue(float value)
         {
-            return Settings == null ? value : Settings.CalculateValue(value);
+            return Settings == null ? value : Settings.ModifyValue(value);
         }
 
         public Categories GetCategory()
@@ -55,56 +56,64 @@ public class Params
 
     public class ElevationParam : BaseParam
     {
-        public static readonly float Void = 0f;
-        public static readonly float Deep = 0.1f;
-        public static readonly float Shallow = 0.25f;
-        public static readonly float Plains = 0.4f;
-        public static readonly float SmallHill = 0.6f;
-        public static readonly float LargeHill = 0.75f;
-        public static readonly float Mountain = 0.9f;
+        private float[] Elevations;
+        private float[] Ranges;
+        private float SeaLevel;
+        private float DeepSeaLevel;
 
-        private float MaxElevation;
-        private float MinElevation;
-
-        public ElevationParam(float elevation, ParamSettings settings)
+        public ElevationParam(float[] elevations, float[] ranges, float seaLevel, float deepSeaLevel, ParamSettings settings)
         {
             Category = Categories.Generation;
             Settings = settings;
-            MaxElevation = elevation;
+            Elevations = elevations;
+            Ranges = ranges;
+            SeaLevel = seaLevel;
+            DeepSeaLevel = deepSeaLevel;
         }
 
-        public float GetMaxElevation()
+        public float GetElevation(float value)
         {
-            return MaxElevation;
+            float modValue = Settings.Calculate(value, 0f, true);
+            for (int i = 0; i < Ranges.Length; i++)
+            {
+                if (modValue <= Ranges[i])
+                {
+                    return Elevations[i];
+                }
+            }
+            throw new Exception();
         }
 
-        public float GetMinElevation()
-        {
-            return MinElevation;
-        }
+        public float GetSeaLevel() { return SeaLevel; }
+
+        public float GetDeepSeaLevel() { return DeepSeaLevel; }
     }
 
     public class TerrainParam : BaseParam
     {
-        public enum Terrains
-        {
+        private TerrainBase[] Terrains;
+        private float[] Ranges;
 
-        }
-        // ADD TERRAIN
-
-        private Terrains Terrain;
-        private Range Range;
-
-        public TerrainParam(Terrains terrain, ParamSettings settings)
+        public TerrainParam(TerrainBase[] terrains, float[] ranges, ParamSettings settings)
         {
             Category = Categories.Generation;
             Settings = settings;
-            Terrain = terrain;
+            Terrains = terrains;
+            Ranges = ranges;
         }
 
-        public Terrains GetTerrain()
+        public TerrainBase GetTerrain(float value)
         {
-            return Terrain;
+            float modValue = Settings.Calculate(value, 0f, true);
+            for (int i = 0; i < Ranges.Length; i++)
+            {
+                if (modValue <= Ranges[i])
+                {
+                    return Terrains[i];
+                }
+            }
+
+            throw new Exception();
         }
     }
 

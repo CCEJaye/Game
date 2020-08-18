@@ -66,7 +66,6 @@
     <Compile Include="Assets\Scripts\Data\Features.cs" />
     <Compile Include="Assets\Scripts\Data\Generation.cs" />
     <Compile Include="Assets\Scripts\Data\Resources.cs" />
-    <Compile Include="Assets\Scripts\Data\Structs.cs" />
     <Compile Include="Assets\Scripts\Data\Terrains.cs" />
     <Compile Include="Assets\Scripts\Data\Types.cs" />
     <Compile Include="Assets\Scripts\Data\Worlds\Conditions.cs" />
@@ -76,6 +75,7 @@
     <Compile Include="Assets\Scripts\Data\Worlds\Worlds.cs" />
     <Compile Include="Assets\Scripts\Environment\MapGenerator.cs" />
     <Compile Include="Assets\Scripts\Environment\MapGenerator\HexNoise.cs" />
+    <Compile Include="Assets\Scripts\Environment\MapGenerator\MapData.cs" />
     <Compile Include="Assets\Scripts\Environment\MapGenerator\MetaData.cs" />
     <Compile Include="Assets\Scripts\Environment\MapGenerator\Objects.cs" />
     <Compile Include="Assets\Scripts\TextureAtlas.cs" />
@@ -619,14 +619,32 @@
     <Reference Include="Boo.Lang">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.4f1/Editor/Data/MonoBleedingEdge/lib/mono/unityscript/Boo.Lang.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.RenderPipeline.Universal.ShaderLibrary">
+      <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.RenderPipeline.Universal.ShaderLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Shaders">
+      <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
       <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.RenderPipelines.Core.Editor">
+      <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Core.Runtime">
+      <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.RenderPipelines.Core.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Runtime">
+      <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Editor">
+      <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline">
       <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
@@ -636,6 +654,15 @@
     </Reference>
     <Reference Include="Unity.Rider.Editor">
       <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
+      <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.ShaderGraph.Editor">
+      <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.ShaderGraph.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
+      <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>C:/Users/Administrator/Root/Projects/Game/Repo/Game/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
